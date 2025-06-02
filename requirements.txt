@@ -1,0 +1,10 @@
+black
+flake8
+isort
+loguru
+pip
+pytest
+python-dotenv
+tqdm
+typer
+-e .
