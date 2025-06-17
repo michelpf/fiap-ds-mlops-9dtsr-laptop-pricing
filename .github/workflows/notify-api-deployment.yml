@@ -1,0 +1,40 @@
+name: Notify API Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'notebooks/**'
+
+jobs:
+  notify_api_repository:
+    name: "Notification to API Repository"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Unit testing
+        run: pytest
+
+      - name: Deploy Stage
+        uses: actions/github-script@v6
+        with:
+            github-token: ${{ secrets.ACCESS_TOKEN }}
+            script: |
+                await github.rest.actions.createWorkflowDispatch({
+                    owner: "michelpf",
+                    repo: "fiap-ds-mlops-9dtsr-api-laptop-pricing-brl",
+                    workflow_id: "deploy.yml",
+                    ref: "main"
+                })
